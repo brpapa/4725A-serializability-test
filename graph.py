@@ -22,24 +22,25 @@ class Graph:
       path = set()
       visited = set()
 
-      def visit(u):
+      def dfs(u):
          if u in visited:
             return False
          visited.add(u)
          path.add(u)
-         for neighbour in self.adj_list.get(u, ()):
-            if neighbour[0] in path or visit(neighbour[0]):
+         for adj in self.adj_list.get(u, set()):
+            v = adj[0]
+            if v in path or dfs(v):
                return True
          path.remove(u)
          self.ts.append(u)
          return False
 
-      return any(visit(u) for u in self.adj_list)
+      return any(dfs(u) for u in self.adj_list)
 
    def topo_sort(self):
       self.ts = []
       if (self.is_cyclic()):
-         raise "O grafo não tem uma ordenação topológica."
+         raise Exception("O grafo não tem uma ordenação topológica.")
       return self.ts[::-1]
 
 
@@ -49,5 +50,6 @@ if __name__ == "__main__":
    g.add_edge('1', '2', 1)
    g.add_edge('2', '3', 1)
    g.add_edge('3', '0', 1)
+   print(g.is_cyclic())
    g.remove_edge('3', '0', 1)
-   print(g.cyclic())
+   print(g.topo_sort())

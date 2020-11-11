@@ -1,10 +1,6 @@
 from typing import List
 from graph import Graph
 
-# schedule: cada char indica respectivamente o número da transação, se é R ou W, e o item de dado
-schedule_L2 = ['2RA', '2RB', '2WA', '3RA', '2WB', '1RB', '3WA',
-               '1WB', '4RB', '1RA', '4WB', '1RC', '1WA', '4RA', '4WA', '1WC']
-
 def TO_test(schedule: List[str]):
    "Verifica se a escala é legal segundo o protocolo Timestamp Ordering."
    
@@ -58,8 +54,8 @@ def conflict_serializability_test(schedule: List[str]):
          g.add_edge(current[0], other[0], 0)
 
    if g.is_cyclic():
-      return f"A escala não é serializável no conflito, pois o grafo de precedência é cíclico.\n{g}"
-   return f"A escala é serializável no conflito, pois o grafo de precedência não é cíclico.\n{g}"
+      return f"Grafo de precedência:\n{g}\nA escala não é serializável no conflito, pois o grafo de precedência é cíclico."
+   return f"Grafo de precedência:\n{g}\nA escala é serializável no conflito, pois o grafo de precedência não é cíclico"
 
 def view_serializability_test(schedule: List[str]):
    "Verifica se a escala é serializável na visão."
@@ -93,7 +89,7 @@ def view_serializability_test(schedule: List[str]):
                # Tj: reader
                # Tk: writer
 
-               # se Ti == Tb e Tj != Tf, insira Tj - -0 -> Tk
+               # se Ti == Tb e Tj != Tf, insira Tj --0 -> Tk
                if last_previous_writer[0] == "b" and reader[0] != "f":
                   g.add_edge(reader[0], writer[0], 0)
 
@@ -114,7 +110,9 @@ def view_serializability_test(schedule: List[str]):
       g.add_edge(e1[0], e1[1], p+1)
       if (g.is_cyclic()):
          g.remove_edge(e1[0], e1[1], p+1)
+         print(f"Aresta removida: T{e1[0]} -{p+1}-> T{e1[1]}")
       else:
+         print(f"Aresta removida: T{e2[0]} -{p+1}-> T{e2[1]}")
          continue
       
       g.add_edge(e2[0], e2[1], p+1)
@@ -123,15 +121,20 @@ def view_serializability_test(schedule: List[str]):
 
    ts = g.topo_sort()
    ts = [f"T{t}" for t in ts if t != 'b' and t != 'f']
-   return f"A escala é serializável na visão, pois o grafo de precedência rotulado é acíclico.\nUma escala serial equivalente é {ts}.\nGrafo de precedência rotulado:\n{g}"
+   return f"Grafo de precedência rotulado:\n{g}\nA escala é serializável na visão, pois o grafo de precedência rotulado é acíclico.\nUma escala serial equivalente é {ts}."
 
-   
-# print(TO_test(['2RA', '1RB', '1WB', '2RB', '1RA', '1WA']))
-# print(TO_test(['2RB', '1RB', '1WB', '2RA', '1RA', '1WA']))
-# print(TO_test(schedule_L2))
-# print(conflict_serializability_test(["3WY", "2RY", "1WX", "2RX", "3WX", "4RX", "5WX"]))
-# print(conflict_serializability_test(schedule_L2))
-print(view_serializability_test(schedule_L2))
-# print(view_serializability_test(['3WY', '2RY', '1WX', '2RX', '3WX', '4RX', '5WX']))
-# print(view_serializability_test(['0RQ', '1WQ', '2RQ', '0WQ', '2WQ']))
-# print(view_serializability_test(['0RQ', '1WQ', '0WQ', '2WQ']))
+if __name__ == "__main__":
+   # schedule: lista de instruções, dada na ordem em que são executadas. cada instrução é composta por 3 caracteres: o número da transação, se é R (read) ou W (write), e o item de dado, respectivamente.
+   schedule_L2 = ['2RA', '2RB', '2WA', '3RA', '2WB', '1RB', '3WA', '1WB',
+                  '4RB', '1RA', '4WB', '1RC', '1WA', '4RA', '4WA', '1WC']
+
+   # print(TO_test(schedule_L2))
+   # print(conflict_serializability_test(schedule_L2))
+   # print(view_serializability_test(schedule_L2))
+   # print(TO_test(['2RA', '1RB', '1WB', '2RB', '1RA', '1WA']))
+   # print(TO_test(['2RB', '1RB', '1WB', '2RA', '1RA', '1WA']))
+   # print(conflict_serializability_test(["3WY", "2RY", "1WX", "2RX", "3WX", "4RX", "5WX"]))
+   # print(view_serializability_test(['3WY', '2RY', '1WX', '2RX', '3WX', '4RX', '5WX']))
+   # print(view_serializability_test(['0RQ', '1WQ', '2RQ', '0WQ', '2WQ']))
+   # print(view_serializability_test(['0RQ', '1WQ', '0WQ', '2WQ']))
+
