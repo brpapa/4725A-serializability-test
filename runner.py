@@ -114,13 +114,13 @@ def view_serializability_test(schedule: List[str]):
       else:
          print(f"Aresta removida: T{e2[0]} -{p+1}-> T{e2[1]}")
          continue
-      
+
       g.add_edge(e2[0], e2[1], p+1)
       if (g.is_cyclic()):
          return f"A escala não é serializável na visão, pois o grafo de precedência rotulado é cíclico\n{g}"
 
    ts = g.topo_sort()
-   ts = [f"T{t}" for t in ts if t != 'b' and t != 'f']
+   ts = [f"T{t}" for t in ts if t not in ['b', 'f']]
    return f"Grafo de precedência rotulado:\n{g}\nA escala é serializável na visão, pois o grafo de precedência rotulado é acíclico.\nUma escala serial equivalente é {ts}."
 
 if __name__ == "__main__":
